@@ -1,0 +1,2 @@
+# _earthQuake
+1.

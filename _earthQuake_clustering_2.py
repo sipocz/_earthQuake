@@ -20,7 +20,8 @@ df=pd.read_csv(basedir+"_EarthQuake/features_a.csv")
 df_clasters=pd.read_csv(basedir+"_EarthQuake/train_labels.csv")
 df_testvalues=pd.read_csv(basedir+"_EarthQuake/test_a.csv")
 
-numx=200000
+numx=20000
+print("Minta:", numx)
 Y=df_clasters[["damage_grade"]]
 X=df
 scaler=MinMaxScaler()
@@ -41,10 +42,15 @@ for i in df_testvalues.columns:
 print(len(df_testvalues.columns))
 
 from sklearn.metrics import accuracy_score
+from sklearn.svm import SVC
+knn=SVC()
+
 from sklearn.neighbors import KNeighborsClassifier
-knn = KNeighborsClassifier(n_neighbors=7)
+#knn = KNeighborsClassifier(n_neighbors=7)
+
 from sklearn.neural_network import MLPClassifier
 #knn=MLPClassifier()
+
 knn.fit(X_train, y_train)
 print("Fit End--")
 y_pred=knn.predict(X_test)
@@ -71,7 +77,10 @@ df_testBuilding.head()
 df_out=pd.DataFrame(data=Ypredikt,columns=["damage_grade"], index=list(df_testBuilding["building_id"]),)
 df_out.index.name="building_id"
 df_out.head()
-df_out.to_csv(basedir+"/_EarthQuake/submission_3_proba.csv")
+df_out.to_csv(basedir+"/_EarthQuake/submission_3_svc.csv")
+print("End of Running")
+
+
 
 
 

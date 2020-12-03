@@ -61,18 +61,16 @@ print(f"Accuracy: {accuracy}")
 
 
 df_testvalues=scaler.fit_transform(df_testvalues)
-Ypredikt=knn.predict(df_testvalues)
+#Ypredikt=knn.predict(df_testvalues)
+Ypredikt=[]
 
-
-Ypredikt
 
 df_testo=pd.read_csv(basedir+"/_EarthQuake/test_a.csv")
 
-df_testo.head()
+
 
 df_testBuilding=df_testo[["building_id"]]
 
-df_testBuilding.head()
 
 df_out=pd.DataFrame(data=Ypredikt,columns=["damage_grade"], index=list(df_testBuilding["building_id"]),)
 df_out.index.name="building_id"

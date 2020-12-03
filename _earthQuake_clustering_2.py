@@ -19,8 +19,8 @@ basedir="C:/Users/sipocz/OneDrive/Dokumentumok/GitHub/"
 df=pd.read_csv(basedir+"_EarthQuake/features_a.csv")
 df_clasters=pd.read_csv(basedir+"_EarthQuake/train_labels.csv")
 df_testvalues=pd.read_csv(basedir+"_EarthQuake/test_a.csv")
-
-numx=20000
+print(df.index)
+numx=260601
 print("Minta:", numx)
 Y=df_clasters[["damage_grade"]]
 X=df
@@ -43,7 +43,7 @@ print(len(df_testvalues.columns))
 
 from sklearn.metrics import accuracy_score
 from sklearn.svm import SVC
-knn=SVC()
+#knn=SVC()
 
 from sklearn.neighbors import KNeighborsClassifier
 #knn = KNeighborsClassifier(n_neighbors=7)
@@ -51,6 +51,14 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
 #knn=MLPClassifier()
 
+from sklearn.gaussian_process import GaussianProcessClassifier
+#knn = GaussianProcessClassifier()
+
+from xgboost import XGBClassifier
+
+knn = XGBClassifier()
+
+print("Fit Start--")
 knn.fit(X_train, y_train)
 print("Fit End--")
 y_pred=knn.predict(X_test)
@@ -75,7 +83,7 @@ df_testBuilding=df_testo[["building_id"]]
 df_out=pd.DataFrame(data=Ypredikt,columns=["damage_grade"], index=list(df_testBuilding["building_id"]),)
 df_out.index.name="building_id"
 df_out.head()
-df_out.to_csv(basedir+"/_EarthQuake/submission_3_svc.csv")
+df_out.to_csv(basedir+"/_EarthQuake/submission_3_GPC.csv")
 print("End of Running")
 
 

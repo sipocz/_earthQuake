@@ -54,13 +54,28 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.gaussian_process import GaussianProcessClassifier
 #knn = GaussianProcessClassifier()
 
-from xgboost import XGBClassifier
+from xgboost import XGBClassifier  # 72.09
+# max_depth=10 : 72.79857561664441
 
-knn = XGBClassifier()
+
+
+#knn = XGBClassifier(verbosity=1,max_depth = 10,process_type="default", predictor="gpu_predictor", feature_selector ="shuffle",booster="gbtree")
+
+from sklearn.naive_bayes import GaussianNB
+
+knn = GaussianNB()
+
 
 print("Fit Start--")
 knn.fit(X_train, y_train)
+
 print("Fit End--")
+
+print("Fit Start--")
+#knn.fit(X_train, y_train)
+
+print("Fit End--")
+
 y_pred=knn.predict(X_test)
 print("Prediction End--")
 
@@ -69,8 +84,8 @@ print(f"Accuracy: {accuracy}")
 
 
 df_testvalues=scaler.fit_transform(df_testvalues)
-#Ypredikt=knn.predict(df_testvalues)
-Ypredikt=[]
+Ypredikt=knn.predict(df_testvalues)
+#Ypredikt=[]
 
 
 df_testo=pd.read_csv(basedir+"/_EarthQuake/test_a.csv")
@@ -83,7 +98,7 @@ df_testBuilding=df_testo[["building_id"]]
 df_out=pd.DataFrame(data=Ypredikt,columns=["damage_grade"], index=list(df_testBuilding["building_id"]),)
 df_out.index.name="building_id"
 df_out.head()
-df_out.to_csv(basedir+"/_EarthQuake/submission_3_GPC.csv")
+df_out.to_csv(basedir+"/_EarthQuake/submission_3_GNB.csv")
 print("End of Running")
 
 

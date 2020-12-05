@@ -1,5 +1,6 @@
 from sklearn.ensemble import IsolationForest
 import numpy as np
+from sklearn.metrics import accuracy_score
 
 
 
@@ -16,12 +17,23 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 
+
+def outlierStatistic(X_train_predict):
+    print(X_train_predict)
+    maxX=len(X_train_predict)
+    outlier=0
+    for i in X_train_predict:
+        if i==-1:
+            outlier+=1
+    print(f"A összes ({maxX} darabból {outlier} darab outlier van. Az {outlier/maxX*100:5.1f} %.)")
+
 basedir="C:/Users/sipocz/OneDrive/Dokumentumok/GitHub"
 df=pd.read_csv(basedir+"/_EarthQuake/features_a.csv")
 df_clasters=pd.read_csv(basedir+"/_EarthQuake/train_labels.csv")
 df_testvalues=pd.read_csv(basedir+"/_EarthQuake/test_a.csv")
 #official_testvalues=pd.read_csv("/content/drive/My Drive/001_AI/_EarthQuake/test_values.csv")
 
+# Adatfeldolgozás, beolvasások 
 
 numx=260601
 #numx=50000
@@ -47,6 +59,16 @@ print(len(X_train))
 print(X_train)
 
 # inlier és outlier bombázás
+# -------------------- Az ötlet -----------------------
+# Szedjük a halmazt kétfele 
+# inlierekre és outlierekre 
+# kezeljük őket külön
+# a külön halmazokra illesszünk egy Classifiert 
+# OSztályozzuk mindkét halmazt a saját klasszifier modellje szerint
+# Fűzzük egybe az adatokat  
+#
+#
+
 clf = IsolationForest(n_estimators=117, warm_start=True, max_features=57)
 clf.fit(X_train)  # fit 10 trees  
 #clf.set_params()  # add 10 more trees  
@@ -56,14 +78,7 @@ X_train_predict=clf.predict(X_train)
 print(len(X_train))
 print(X_train)
 
-def outlierStatistic(X_train_predict):
-    print(X_train_predict)
-    maxX=len(X_train_predict)
-    outlier=0
-    for i in X_train_predict:
-        if i==-1:
-            outlier+=1
-    print(f"A összes ({maxX} darabból {outlier} darab outlier van. Az {outlier/maxX*100:5.1f} %.)")
+
 outlierStatistic(X_train_predict)
 
 # az official test vizsgálata outlierekre nézve:
@@ -79,15 +94,17 @@ print(X_train[1])
 y_train["damage_grade"].values
 
 
-
+# Szétszedjük a rendszer inlierekre és outlierekre !
 X_train_inliers=[X_train[inx] for inx,i in enumerate(X_train_predict) if i==1 ]
-X_train_outliers=[X_train[index] for index,i in enumerate(X_train_predict) if i==-1 ]
+X_train_outliers=[X_train[inx] for inx,i in enumerate(X_train_predict) if i==-1 ]
 tmp=list(y_train["damage_grade"].values)
 y_train_inliers=[tmp[inx] for inx,i in enumerate(X_train_predict) if i==1 ]
 y_train_outliers=[tmp[inx] for inx,i in enumerate(X_train_predict) if i==-1 ]
 
 
 
+# ---------------- Inlier modell Start ----------------
+# konvertáljuk DataFrame - mé a listákat.
 dX1=pd.DataFrame (X_train_inliers)
 dY1=pd.DataFrame (y_train_inliers)
 DtX=pd.DataFrame(X_test)
@@ -97,27 +114,28 @@ DtX=pd.DataFrame(X_test)
 from xgboost import XGBClassifier  # 72.09
 # max_depth=10 : 72.79857561664441
 
-
-
 knn_inlier = XGBClassifier(verbosity=3,max_depth = 35)
 
-print("Fit Start--")
+print("Fit: Inlier betanitás Start--")
 knn_inlier.fit(dX1, dY1)
-print("Fit End--")
+print("Fit End - Prediction Start ")
 
 y_pred=knn_inlier.predict(DtX)
-print("Prediction End--")
+print("Prediction End")
+
+
 
 # Inlier statistics
-from sklearn.metrics import accuracy_score
 accuracy =  accuracy_score(y_test, y_pred) * 100
 print(f"Accuracy a testhalmazra nézve: {accuracy}")
 y_pred2=knn_inlier.predict(dX1)
 accuracy =  accuracy_score(y_pred2, y_train_inliers) * 100
 print(f"Accuracy a betanított halmazra : {accuracy}")
 
+# ------------- Inlier model vége ---------------
 
-
+#-------------- Outlier MOdel Start --------------
+# DataFrame készítése 
 dX1_ol=pd.DataFrame (X_train_outliers)
 dY1_ol=pd.DataFrame (y_train_outliers)
 DtX=pd.DataFrame(X_test)
@@ -139,15 +157,18 @@ print(f"Accuracy a betanított halmazra : {accuracy}")
 
 
 
-# megvan a két modell, inlierekre és oulierekre
+# megvan a két modell, inlierekre és outlierekre
 
 
 #az eredeti adatok itt vannak
+# ---------------------------------------------------------------------
 # df_testvalues  #teszteljuk vissza a rendszert  egy eredeti halmazzal 
+#----------------------------------------------------------------------
 # pl így kapjuk szét az eredeti adatoka
+#
 X_train, X_test, y_train, y_test = train_test_split(Xt, Y, random_state=2,test_size=0.3)
 df_testvalues=X_test
-
+#----------------------------------------------------------------------
 # szét kellene kapni inlierekre és outlierekre a korábban betanított modellel.
 test_outliers=clf.predict(df_testvalues)
 outlierStatistic(test_outliers)
@@ -193,6 +214,7 @@ for idx,i in enumerate(test_outliers):
 print(len(building))
 
 
+
 outdf=pd.DataFrame(data={"damage_grade":damage} ,index=building)
 outdf.index.name="building_id"
 
@@ -205,3 +227,8 @@ outdf.to_csv(basedir+"/_EarthQuake/submission_6_outlier.csv")
 #!head "/content/drive/My Drive/001_AI/_EarthQuake/submission_6_outlier.csv"
 
 #!head "/content/drive/My Drive/001_AI/_EarthQuake/test_a.csv"
+
+accuracy =  accuracy_score(damage, y_test) * 100
+
+print("-----------###------------------------")
+print(f"Accuracy a demóra halmazra : {accuracy}")

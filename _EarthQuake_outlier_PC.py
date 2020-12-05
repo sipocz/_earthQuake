@@ -69,7 +69,7 @@ print(X_train)
 #
 #
 
-clf = IsolationForest(n_estimators=117, warm_start=True, max_features=57)
+clf = IsolationForest(n_estimators=117, warm_start=False, max_features=45)
 clf.fit(X_train)  # fit 10 trees  
 #clf.set_params()  # add 10 more trees  
 #clf.fit(X)  # fit the added trees 
@@ -162,29 +162,31 @@ print(f"Accuracy a betanított halmazra : {accuracy}")
 
 #az eredeti adatok itt vannak
 # ---------------------------------------------------------------------
-# df_testvalues  #teszteljuk vissza a rendszert  egy eredeti halmazzal 
+df_testvalues  #teszteljuk vissza a rendszert  egy eredeti halmazzal 
 #----------------------------------------------------------------------
-# pl így kapjuk szét az eredeti adatoka
-#
-X_train, X_test, y_train, y_test = train_test_split(Xt, Y, random_state=2,test_size=0.3)
-df_testvalues=X_test
+# pl így kapjuk szét az eredeti adatokat
+# -- demo adatok esetén --
+#X_train, X_test, y_train, y_test = train_test_split(Xt, Y, random_state=2,test_size=0.5)
+#df_testvalues=X_test
 #----------------------------------------------------------------------
 # szét kellene kapni inlierekre és outlierekre a korábban betanított modellel.
 test_outliers=clf.predict(df_testvalues)
+
+# nézzünk egy statisztikát
 outlierStatistic(test_outliers)
 
 #szedjük szét inlier és outlier listákra
 
 
-X_test_inliers=[X_train[inx] for inx,i in enumerate(test_outliers) if i==1 ]
-X_test_outliers=[X_train[index] for index,i in enumerate(test_outliers) if i==-1 ]
+X_test_inliers=[df_testvalues[inx] for inx,i in enumerate(test_outliers) if i==1 ]
+X_test_outliers=[df_testvalues[inx] for inx,i in enumerate(test_outliers) if i==-1 ]
 
 df_X_test_inliers=pd.DataFrame (X_test_inliers)
 df_X_test_outliers=pd.DataFrame (X_test_outliers)
 
 #predikáljuk az értékeket
 #van betanított inlier predikátorunk
-#meg van eghy az outlierekre is 
+#meg van egy az outlierekre is 
 
 y_inlier_predikt=knn_inlier.predict(df_X_test_inliers)
 y_outlier_predikt=knn_outlier.predict(df_X_test_outliers)
@@ -194,8 +196,8 @@ df_buildings=df_test_buildings[["building_id"]]
 
 building_id=df_buildings[["building_id"]].values
 
-building_id
-
+print("building_id hossza:",len(building_id))
+print("test_outliers hossza:",len(test_outliers))
 building=[]
 damage=[]
 opi=0 # outlier predikt index
@@ -204,12 +206,19 @@ bid=0
 #össze kellene rakni az eredeti listát
 for idx,i in enumerate(test_outliers):
     building.append(building_id[idx][0])  # idx-el kell hivatkozni 
+  # a buildin egyelőre nem érdekel, nem végleges adtokkal foglalkozunk !!!
     if i==-1:
         damage.append(y_outlier_predikt[opi])
         opi+=1
     else:
         damage.append(y_inlier_predikt[ipi])    
         ipi+=1
+# -- demo adatok esetén --
+#accuracy =  accuracy_score(damage, y_test) * 100
+
+print("-----------###------------------------")
+print(f"Accuracy a demóra halmazra : {accuracy}")
+
 
 print(len(building))
 
@@ -228,7 +237,3 @@ outdf.to_csv(basedir+"/_EarthQuake/submission_6_outlier.csv")
 
 #!head "/content/drive/My Drive/001_AI/_EarthQuake/test_a.csv"
 
-accuracy =  accuracy_score(damage, y_test) * 100
-
-print("-----------###------------------------")
-print(f"Accuracy a demóra halmazra : {accuracy}")

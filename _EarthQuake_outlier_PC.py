@@ -166,8 +166,8 @@ df_testvalues  #teszteljuk vissza a rendszert  egy eredeti halmazzal
 #----------------------------------------------------------------------
 # pl így kapjuk szét az eredeti adatokat
 # -- demo adatok esetén --
-#X_train, X_test, y_train, y_test = train_test_split(Xt, Y, random_state=2,test_size=0.5)
-#df_testvalues=X_test
+X_train, X_test, y_train, y_test = train_test_split(Xt, Y, random_state=2,test_size=0.5)
+df_testvalues=X_test
 #----------------------------------------------------------------------
 # szét kellene kapni inlierekre és outlierekre a korábban betanított modellel.
 test_outliers=clf.predict(df_testvalues)
@@ -177,9 +177,9 @@ outlierStatistic(test_outliers)
 
 #szedjük szét inlier és outlier listákra
 
-
-X_test_inliers=[df_testvalues[inx] for inx,i in enumerate(test_outliers) if i==1 ]
-X_test_outliers=[df_testvalues[inx] for inx,i in enumerate(test_outliers) if i==-1 ]
+list_testvalues=df_testvalues.values.tolist()
+X_test_inliers=[list_testvalues[inx] for inx,i in enumerate(test_outliers) if i==1 ]
+X_test_outliers=[list_testvalues[inx] for inx,i in enumerate(test_outliers) if i==-1 ]
 
 df_X_test_inliers=pd.DataFrame (X_test_inliers)
 df_X_test_outliers=pd.DataFrame (X_test_outliers)
@@ -206,7 +206,7 @@ bid=0
 #össze kellene rakni az eredeti listát
 for idx,i in enumerate(test_outliers):
     building.append(building_id[idx][0])  # idx-el kell hivatkozni 
-  # a buildin egyelőre nem érdekel, nem végleges adtokkal foglalkozunk !!!
+    #a buildin egyelőre nem érdekel, nem végleges adtokkal foglalkozunk !!!
     if i==-1:
         damage.append(y_outlier_predikt[opi])
         opi+=1

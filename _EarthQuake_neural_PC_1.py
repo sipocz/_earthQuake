@@ -63,7 +63,7 @@ print(X_train)
 
 from sklearn.neural_network import MLPClassifier
 
-clf = MLPClassifier(solver='lbfgs', alpha=1e-6,verbose=True,max_iter=6000, hidden_layer_sizes=(20,20, 20,20), random_state=1)
+clf = MLPClassifier(solver='lbfgs', alpha=1e-6,verbose=True,max_iter=6000, hidden_layer_sizes=(20,20,30,20,20), random_state=1)
 
 clf.fit(X_train, y_train)
 

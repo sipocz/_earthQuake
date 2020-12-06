@@ -45,7 +45,7 @@ Xt=scaler.fit_transform(Xt)
 Xt=Xt[:numx]
 Y=Y[["damage_grade"]]
 Y=Y[:numx]
-X_train, X_test, y_train, y_test = train_test_split(Xt, Y, random_state=2,test_size=0.5)
+X_train, X_test, y_train, y_test = train_test_split(Xt, Y, random_state=2,test_size=0.30)
 df_buildings=df_testvalues[["building_id"]]
 heads=df.columns
 print(len(heads))
@@ -63,7 +63,7 @@ print(X_train)
 
 from sklearn.neural_network import MLPClassifier
 
-clf = MLPClassifier(solver='lbfgs', alpha=1e-6,verbose=True,max_iter=6000, hidden_layer_sizes=(20,20,30,20,20), random_state=1)
+clf = MLPClassifier(solver='lbfgs', alpha=1e-6,verbose=True,max_iter=26000, hidden_layer_sizes=(57,80,30,20,5), random_state=1)
 
 clf.fit(X_train, y_train)
 

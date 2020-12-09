@@ -149,11 +149,15 @@ X_train_ok=kill_columns(X_train_conv)
 X_pred_ok=kill_columns(X_pred_conv)
 y_train_ok=kill_columns(y_train)
 
+X_train_ok.to_csv(basedir+"/_EarthQuake/X_tran_ok.csv")
+X_pred_ok.to_csv(basedir+"/_EarthQuake/X_pred_ok.csv")
+y_train_ok.to_csv(basedir+"/_EarthQuake/y_train_ok.csv")
+
 
 from xgboost import XGBClassifier  # 72.09
 # max_depth=10 : 72.79857561664441
 
-knn = XGBClassifier(verbosity=3,max_depth = 95, n_estimators=400)
+knn = XGBClassifier(verbosity=3,max_depth = 5, n_estimators=50)
 
 print("Fit: Inlier betanitás Start--")
 knn.fit(X_train_ok, y_train_ok)
@@ -182,6 +186,6 @@ outdf.index.name="building_id"
 outdf.head()
 
 
-outdf.to_csv(basedir+"/_EarthQuake/submission_10_xgboost.csv")
+outdf.to_csv(basedir+"/_EarthQuake/submission_12_xgboost.csv")
 print()
 print(basedir+"/_EarthQuake/submission_9_xgboost.csv")

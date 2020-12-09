@@ -135,7 +135,7 @@ def kill_columns(df):
             df.drop(columns=[i], inplace=True)
     return df
 
-f=open(basedir+"/_EarthQuake/similarity.csv","a")
+f=open(basedir+"/_EarthQuake/all_similarity.csv","a")
 X_train_ok=pd.read_csv(basedir+"/_EarthQuake/X_tran_ok.csv")
 X_pred_ok=pd.read_csv(basedir+"/_EarthQuake/X_pred_ok.csv")
 y_train_ok=pd.read_csv(basedir+"/_EarthQuake/y_train_ok.csv")
@@ -144,15 +144,19 @@ X_train_ok.head()
 X_pred_ok.head()
 print("hello")
 for i in X_pred_ok.index:
-    min=5
-    for j in range(10000):
+    min=0.1
+    db=0
+    for j in range(260000):
         
-        a=np.linalg.norm(X_train_ok.loc[j][-1]-X_pred_ok.loc[i][-1])
-        if a < min:
+        a=abs(X_train_ok.loc[j][-1]-X_pred_ok.loc[i][-1])
+        if a <= min:
             print(f"Adatok: pred:{i:8}, trean:{j:7},{a:8}")
-            print(f"{i};{j},{a:16}", file=f)
+            print(f"{i},{j},{a:16}", file=f)
             min=a
-
+            if a==0:
+                db=db+1
+            if db>10:
+                exit
 f.close()
 
 '''

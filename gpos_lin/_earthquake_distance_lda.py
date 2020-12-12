@@ -208,7 +208,8 @@ X_train_train, X_train_test,y_train_train, y_train_test  = train_test_split( X_t
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 
 lda = LinearDiscriminantAnalysis(n_components=45)
-lda.fit(X_train_train, y_train_train)
+print(y_train_train)
+lda.fit(X_train_train, y_train_train["damage_grade"])
 X_train = lda.transform(X_train_train)
 #y_train = lda.transform(y_train_train)
 X_test=lda.transform(X_train_test)

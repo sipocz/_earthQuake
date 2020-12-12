@@ -140,14 +140,16 @@ X_train_ok=pd.read_csv(basedir+"/_EarthQuake/X_tran_ok.csv")
 X_pred_ok=pd.read_csv(basedir+"/_EarthQuake/X_pred_ok.csv")
 y_train_ok=pd.read_csv(basedir+"/_EarthQuake/y_train_ok.csv")
 
-X_train_ok.head()
-X_pred_ok.head()
-print("hello")
+print(X_train_ok.head())
+#X_pred_ok.head()
+print(type(X_train_ok["geopos"]))
 for i in X_pred_ok.index:
     min=0.1
     db=0
     for j in range(260000):
-        
+        newarr=X_train_ok.loc
+
+        '''
         a=abs(X_train_ok.loc[j][-1]-X_pred_ok.loc[i][-1])
         if a <= min:
             print(f"Adatok: pred:{i:8}, trean:{j:7},{a:8}")
@@ -157,6 +159,7 @@ for i in X_pred_ok.index:
                 db=db+1
             if db>10:
                 exit
+        '''
 f.close()
 
 '''
